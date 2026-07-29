@@ -41,7 +41,11 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
+document = models.FileField(
+    upload_to="project_documents/",
+    blank=True,
+    null=True
+)
 
 class Task(models.Model):
     STATUS_CHOICES = (
@@ -64,6 +68,12 @@ class Task(models.Model):
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default="medium")
     due_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    attachment = models.FileField(
+    upload_to="task_attachments/",
+    blank=True,
+    null=True
+)
 
     def __str__(self):
         return self.title
