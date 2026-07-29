@@ -98,3 +98,21 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.title
+    
+class ActivityLog(models.Model):
+    ACTION_CHOICES = (
+        ("create", "Create"),
+        ("update", "Update"),
+        ("delete", "Delete"),
+        ("assign", "Assign"),
+        ("comment", "Comment"),
+        ("login", "Login"),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action}"
