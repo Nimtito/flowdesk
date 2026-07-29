@@ -23,13 +23,14 @@ from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import User, Project, Task, Comment, Notification
+from .models import User, Project, Task, Comment, Notification,ActivityLog
 from .serializers import (
     UserSerializer,
     ProjectSerializer,
     TaskSerializer,
     CommentSerializer,
     NotificationSerializer,
+    ActivityLogSerializer
 )
 from .permissions import (
     IsAdmin,
@@ -55,7 +56,30 @@ class ProjectViewSet(viewsets.ModelViewSet):
     search_fields = ["name", "description"]
 
     ordering_fields = ["start_date", "due_date", "created_at"]
+def perform_create(self, serializer):
+    project = serializer.save()
 
+    ActivityLog.objects.create(
+        user=self.request.user,
+        action="create",
+        description=f'Created project "{project.name}"'
+    )
+def perform_update(self, serializer):
+    project = serializer.save()
+
+    ActivityLog.objects.create(
+        user=self.request.user,
+        action="update",
+        description=f'Updated project "{project.name}"'
+    )
+def perform_destroy(self, instance):
+    ActivityLog.objects.create(
+        user=self.request.user,
+        action="delete",
+        description=f'Deleted project "{instance.name}"'
+    )
+
+    instance.delete()
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -156,7 +180,7 @@ class ReportsView(APIView):
 
     def get(self, request):
 
-        report = {
+      report = {
     "total_projects": Project.objects.count(),
     "active_projects": Project.objects.filter(status="active").count(),
     "completed_projects": Project.objects.filter(status="completed").count(),
@@ -178,5 +202,8 @@ class ReportsView(APIView):
     "project_progress": list(
     Project.objects.values("name", "status")
 ),
-
-}
+      }
+class ActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ActivityLog.objects.all().order_by("-created_at")
+    serializer_class = ActivityLogSerializer
+    permission_classes = [IsAuthenticated]
