@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Project, Task, Comment, Notification
+from .models import User, Project, Task, Comment, Notification,ActivityLog
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,4 +71,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["password"] = make_password(validated_data["password"])
         return User.objects.create(**validated_data)
+    
+class ActivityLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityLog
+        fields = "__all__"
+
     fields = "__all__"
