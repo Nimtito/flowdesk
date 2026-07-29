@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import DashboardStatsView
 from .views import RegisterView
 from .views import ProfileView
+from .views import ReportsView
 from .views import (
     UserViewSet,
     ProjectViewSet,
@@ -24,4 +25,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path("register/", RegisterView.as_view(), name="register"),
     path("profile/", ProfileView.as_view(), name="profile"),
+    path("reports/", ReportsView.as_view(), name="reports"),
 ]
