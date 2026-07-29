@@ -18,6 +18,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsTaskOwnerOrManager
+from django.db.models import Count
+from django.utils import timezone
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import User, Project, Task, Comment, Notification
 from .serializers import (
     UserSerializer,
@@ -144,3 +149,34 @@ class ProfileView(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReportsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        report = {
+    "total_projects": Project.objects.count(),
+    "active_projects": Project.objects.filter(status="active").count(),
+    "completed_projects": Project.objects.filter(status="completed").count(),
+
+    "total_tasks": Task.objects.count(),
+    "completed_tasks": Task.objects.filter(status="completed").count(),
+    "pending_tasks": Task.objects.exclude(status="completed").count(),
+
+    "overdue_tasks": Task.objects.filter(
+        due_date__lt=timezone.now().date(),
+        status__in=["todo", "in_progress"]
+    ).count(),
+
+    "employee_workload": list(
+        User.objects.filter(role="employee")
+        .annotate(tasks=Count("tasks"))
+        .values("username", "tasks")
+    ),
+    "project_progress": list(
+    Project.objects.values("name", "status")
+),
+
+}
