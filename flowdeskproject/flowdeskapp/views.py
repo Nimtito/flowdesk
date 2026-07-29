@@ -8,6 +8,8 @@ from rest_framework_simplejwt.views import (
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Project, Task, User, Notification
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from .models import User, Project, Task, Comment, Notification
 from .serializers import (
@@ -23,15 +25,40 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    filterset_fields = ["status", "priority"]
+
+    search_fields = ["name", "description"]
+
+    ordering_fields = ["start_date", "due_date", "created_at"]
 
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+filterset_fields = [
+    "status",
+    "priority",
+    "assigned_to",
+    "project"
+]
+
+search_fields = [
+    "title",
+    "description"
+]
+
+ordering_fields = [
+    "due_date",
+    "created_at"
+]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
