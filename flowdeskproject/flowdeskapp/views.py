@@ -10,7 +10,14 @@ from rest_framework.response import Response
 from .models import Project, Task, User, Notification
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from .serializers import RegisterSerializer
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .permissions import IsTaskOwnerOrManager
 from .models import User, Project, Task, Comment, Notification
 from .serializers import (
     UserSerializer,
@@ -19,15 +26,22 @@ from .serializers import (
     CommentSerializer,
     NotificationSerializer,
 )
-
+from .permissions import (
+    IsAdmin,
+    IsManager,
+    IsEmployee,
+    IsAdminOrManager,
+)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
+    permission_classes = [IsAdmin]
+    
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [IsAdminOrManager]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
 
@@ -41,8 +55,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    permission_classes = [IsAuthenticated, IsTaskOwnerOrManager]
 
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
 filterset_fields = [
     "status",
     "priority",
@@ -60,20 +75,35 @@ ordering_fields = [
     "created_at"
 ]
 
-
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter, OrderingFilter]
+
+    search_fields = ["comment"]
+
+    ordering_fields = ["created_at"]
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    filterset_fields = ["is_read"]
+
+    search_fields = ["title", "message"]
+
+    ordering_fields = ["created_at"]
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 class DashboardStatsView(APIView):
+    permission_classes = [IsAuthenticated]    
 
     def get(self, request):
         data = {
@@ -89,3 +119,28 @@ class DashboardStatsView(APIView):
         }
 
         return Response(data)
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        serializer = UserSerializer(
+            request.user,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
