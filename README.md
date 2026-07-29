@@ -1,15 +1,11 @@
-# FlowDesk Backend
+# FlowDesk 
 
 ## Overview
-
-FlowDesk Backend is the server-side application for the FlowDesk platform. It provides REST APIs that allow the frontend to manage users, projects, tasks, notifications, reports, and AI-assisted features.
-
-The backend is built using Django and Django REST Framework, with PostgreSQL as the primary database.
+An AI-powered work management and business operations platform built for small and medium-sized businesses. FlowDesk replaces scattered communication across WhatsApp, spreadsheets, notebooks, and emails with a single, centralized workspace where teams can manage projects, tasks, meetings, and daily operations.
 
 ---
 
 # Problem Statement
-
 Many small and medium-sized businesses manage their daily work using different tools such as WhatsApp, spreadsheets, notebooks, and emails. This makes it difficult to organize projects, monitor progress, assign responsibilities, and access important information.
 
 FlowDesk Backend solves this problem by providing one centralized system that stores and manages all business data securely.
@@ -17,8 +13,7 @@ FlowDesk Backend solves this problem by providing one centralized system that st
 ---
 
 # Solution
-
-The backend acts as the central hub of the application. It handles authentication, stores business information, processes requests from the frontend, and communicates with the AI service whenever AI assistance is requested.
+FlowDesk provides one reliable platform for managing projects, teams, tasks, meetings, and business operations. Every project, task, comment, notification, and report is stored in one system. AI is used as an assistant to summarize meetings, suggest project tasks, and recommend priorities, while all business decisions remain under the control of users.
 
 ---
 
@@ -243,6 +238,7 @@ AI_API_KEY=
 6. If AI assistance is requested, Django communicates with the AI service.
 7. Django returns a JSON response.
 8. React updates the user interface.
+
 # Future Improvements
 - Calendar Integration
 - Email Notifications
