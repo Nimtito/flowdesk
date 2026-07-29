@@ -49,3 +49,25 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = "__all__"
+
+from django.contrib.auth.hashers import make_password
+
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "role",
+            "phone_number",
+        ]
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
+
+    def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return User.objects.create(**validated_data)
