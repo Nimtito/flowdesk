@@ -76,5 +76,3 @@ class ActivityLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityLog
         fields = "__all__"
-
-    fields = "__all__"
