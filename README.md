@@ -1,24 +1,16 @@
 # FlowDesk 
-
 ## Overview
 An AI-powered work management and business operations platform built for small and medium-sized businesses. FlowDesk replaces scattered communication across WhatsApp, spreadsheets, notebooks, and emails with a single, centralized workspace where teams can manage projects, tasks, meetings, and daily operations.
-
 ---
-
 # Problem Statement
 Many small and medium-sized businesses manage their daily work using different tools such as WhatsApp, spreadsheets, notebooks, and emails. This makes it difficult to organize projects, monitor progress, assign responsibilities, and access important information.
 
 FlowDesk Backend solves this problem by providing one centralized system that stores and manages all business data securely.
-
 ---
-
 # Solution
 FlowDesk provides one reliable platform for managing projects, teams, tasks, meetings, and business operations. Every project, task, comment, notification, and report is stored in one system. AI is used as an assistant to summarize meetings, suggest project tasks, and recommend priorities, while all business decisions remain under the control of users.
-
 ---
-
 # Features
-
 ## Authentication
 
 - User Registration
@@ -89,17 +81,11 @@ backend/
 │   └── __init__.py
 │
 ├── apps/
-│   ├── accounts/
 │   ├── projects/
 │   ├── tasks/
 │   ├── teams/
 │   ├── notifications/
 │   ├── reports/
-│   ├── ai/
-│   └── common/
-│
-├── media/
-├── static/
 ├── requirements.txt
 ├── manage.py
 ├── .env
@@ -115,7 +101,6 @@ backend/
 ```
 POST /api/auth/register/
 POST /api/auth/login/
-POST /api/auth/logout/
 GET  /api/auth/profile/
 ```
 
@@ -167,7 +152,7 @@ POST /api/ai/prioritize-tasks/
 ## Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/flowdesk-backend.git
+git clone https://github.com/nimtito/flowdesk-backend.git
 ```
 
 ## Create a virtual environment
@@ -182,12 +167,6 @@ python -m venv venv
 
 ```bash
 venv\Scripts\activate
-```
-
-### Linux / macOS
-
-```bash
-source venv/bin/activate
 ```
 
 ## Install dependencies
@@ -234,10 +213,8 @@ AI_API_KEY=
 2. React sends requests to Django through REST APIs.
 3. Django validates the request.
 4. Business logic is processed.
-5. PostgreSQL stores or retrieves data.
-6. If AI assistance is requested, Django communicates with the AI service.
-7. Django returns a JSON response.
-8. React updates the user interface.
+5.PostgreSQL stores or retrieves data.
+6. Django returns a JSON response.
 
 # Future Improvements
 - Calendar Integration
