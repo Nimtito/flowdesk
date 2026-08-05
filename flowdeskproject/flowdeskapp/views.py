@@ -205,10 +205,8 @@ class ProfileView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
 # ==========================
-# REPORTS
+# REPORTS 
 # ==========================
 class ReportsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -231,8 +229,8 @@ class ReportsView(APIView):
 
             "employee_workload": list(
                 User.objects.filter(role="employee")
-                .annotate(tasks=Count("tasks"))
-                .values("username", "tasks")
+                .annotate(tasks_count=Count("tasks"))
+                .values("username", "tasks_count")
             ),
 
             "project_progress": list(
