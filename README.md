@@ -1,15 +1,12 @@
 # FlowDesk 
 ## Overview
 An AI-powered work management and business operations platform built for small and medium-sized businesses. FlowDesk replaces scattered communication across WhatsApp, spreadsheets, notebooks, and emails with a single, centralized workspace where teams can manage projects, tasks, meetings, and daily operations.
----
 # Problem Statement
 Many small and medium-sized businesses manage their daily work using different tools such as WhatsApp, spreadsheets, notebooks, and emails. This makes it difficult to organize projects, monitor progress, assign responsibilities, and access important information.
 
 FlowDesk Backend solves this problem by providing one centralized system that stores and manages all business data securely.
----
 # Solution
 FlowDesk provides one reliable platform for managing projects, teams, tasks, meetings, and business operations. Every project, task, comment, notification, and report is stored in one system. AI is used as an assistant to summarize meetings, suggest project tasks, and recommend priorities, while all business decisions remain under the control of users.
----
 # Features
 ## Authentication
 
