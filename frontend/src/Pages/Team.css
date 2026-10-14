@@ -1,0 +1,752 @@
+
+/* ========================================
+   FLOWDESK — TEAM & COLLABORATION
+======================================== */
+
+.team-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px;
+  background: #f7f8fc;
+  color: #292e43;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.team-page *,
+.team-page *::before,
+.team-page *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   PAGE HEADER
+======================================== */
+
+.team-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.team-eyebrow {
+  margin: 0 0 9px;
+  color: #5965d8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.team-header h1 {
+  margin: 0;
+  color: #252a40;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.team-subtitle {
+  margin: 10px 0 0;
+  color: #7a8194;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.team-refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 17px;
+  border: 1px solid #5965d8;
+  border-radius: 9px;
+  background: #5965d8;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.team-refresh-button:hover:not(:disabled) {
+  background: #4854c4;
+  box-shadow: 0 5px 12px rgb(89 101 216 / 18%);
+  transform: translateY(-1px);
+}
+
+.team-refresh-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   ACCESS NOTICE
+======================================== */
+
+.team-access-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 26px;
+  padding: 19px 21px;
+  border: 1px solid #e4e7f4;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.team-notice-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: #edf0ff;
+  color: #5965d8;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.team-access-notice h2 {
+  margin: 1px 0 6px;
+  color: #343951;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.team-access-notice p {
+  margin: 0;
+  color: #7a8194;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* ========================================
+   ERROR AND EMPTY STATES
+======================================== */
+
+.team-error {
+  margin-bottom: 22px;
+  padding: 17px 20px;
+  border: 1px solid #f3d4d4;
+  border-radius: 11px;
+  background: #fff7f7;
+}
+
+.team-error h2 {
+  margin: 0 0 6px;
+  color: #a83d3d;
+  font-size: 14px;
+}
+
+.team-error p {
+  margin: 0;
+  color: #8f5b5b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.team-inline-message {
+  margin: 0;
+  padding: 22px;
+  color: #7a8194;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ========================================
+   LOADING STATE
+======================================== */
+
+.team-loading {
+  display: flex;
+  min-height: 60vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: #7a8194;
+}
+
+.team-loading p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.team-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e4e7f4;
+  border-top-color: #5965d8;
+  border-radius: 50%;
+  animation: team-spin 0.8s linear infinite;
+}
+
+@keyframes team-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   STATISTICS
+======================================== */
+
+.team-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.team-stat-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #eaecf4;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(30 41 80 / 3%);
+}
+
+.team-stat-label {
+  margin: 0 0 12px;
+  color: #7a8194;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.team-stat-value {
+  margin: 0;
+  color: #292e43;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.team-stat-description {
+  margin: 9px 0 0;
+  color: #9096a7;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   SECTION HEADINGS
+======================================== */
+
+.team-profile-section,
+.team-directory-section {
+  margin-bottom: 30px;
+}
+
+.team-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 17px;
+}
+
+.team-section-header h2 {
+  margin: 0;
+  color: #292e43;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.team-section-header p {
+  margin: 7px 0 0;
+  color: #7a8194;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ========================================
+   PROFILE CARD
+======================================== */
+
+.team-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid #eaecf4;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(30 41 80 / 3%);
+}
+
+.team-profile-avatar,
+.team-project-avatar {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #edf0ff;
+  color: #5965d8;
+  font-size: 19px;
+  font-weight: 750;
+  object-fit: cover;
+}
+
+.team-profile-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-profile-details h3 {
+  margin: 0 0 9px;
+  color: #292e43;
+  font-size: 18px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.team-profile-details p {
+  margin: 5px 0;
+  color: #7a8194;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.team-profile-details p strong {
+  color: #50566b;
+  font-weight: 650;
+}
+
+.team-profile-role {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+
+/* ========================================
+   ROLE AND STATUS BADGES
+======================================== */
+
+.team-role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: #edf0ff;
+  color: #5965d8;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.4;
+  text-align: center;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.team-role-badge.project-status-active,
+.team-role-badge.project-status-completed {
+  background: #e7f8ef;
+  color: #238657;
+}
+
+.team-role-badge.project-status-planning,
+.team-role-badge.project-status-todo {
+  background: #edf0ff;
+  color: #5965d8;
+}
+
+.team-role-badge.project-status-in_progress {
+  background: #fff3df;
+  color: #a36a0b;
+}
+
+.team-role-badge.project-status-on_hold,
+.team-role-badge.project-status-cancelled {
+  background: #f1f2f6;
+  color: #686f82;
+}
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.team-search {
+  display: block;
+  width: 100%;
+  min-height: 43px;
+  margin: 0 0 20px;
+  padding: 0 15px;
+  border: 1px solid #e3e6f0;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #292e43;
+  font-family: inherit;
+  font-size: 13px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.team-search::placeholder {
+  color: #a0a5b4;
+}
+
+.team-search:focus {
+  border-color: #7a84e5;
+  box-shadow: 0 0 0 3px rgb(89 101 216 / 10%);
+}
+
+/* ========================================
+   PROJECT GRID AND CARDS
+======================================== */
+
+.team-project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.team-project-card {
+  min-width: 0;
+  padding: 21px;
+  border: 1px solid #eaecf4;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(30 41 80 / 3%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.team-project-card:hover {
+  box-shadow: 0 7px 20px rgb(30 41 80 / 7%);
+  transform: translateY(-2px);
+}
+
+.team-project-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.team-project-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.team-project-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.team-project-heading h3 {
+  margin: 0;
+  color: #292e43;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.team-project-description {
+  margin: 16px 0;
+  color: #7a8194;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.team-project-manager {
+  margin: 10px 0 0;
+  color: #737b91;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.team-project-manager strong {
+  color: #454b60;
+  font-weight: 650;
+}
+
+.team-project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px solid #edf0f6;
+}
+
+.team-project-meta span {
+  color: #7a8194;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   TASK FILTERS
+======================================== */
+
+.team-task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.team-task-filters button {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid #e4e7f1;
+  border-radius: 8px;
+  background: #fff;
+  color: #737b91;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.team-task-filters button:hover {
+  border-color: #aab0ed;
+  color: #5965d8;
+}
+
+.team-task-filters button.active {
+  border-color: #5965d8;
+  background: #edf0ff;
+  color: #4e59c9;
+}
+
+/* ========================================
+   TASK LIST
+======================================== */
+
+.team-task-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eaecf4;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.team-task-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border-bottom: 1px solid #edf0f6;
+  transition: background 0.2s ease;
+}
+
+.team-task-item:hover {
+  background: #fcfcff;
+}
+
+.team-task-item:last-child {
+  border-bottom: none;
+}
+
+.team-task-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-task-main h3 {
+  margin: 0;
+  color: #292e43;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.team-task-main > p {
+  margin: 8px 0;
+  color: #7a8194;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.team-task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 12px;
+  color: #81889b;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.team-task-meta strong {
+  color: #50566b;
+  font-weight: 650;
+}
+
+.team-task-item > .team-role-badge {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+.team-page button:focus-visible,
+.team-page input:focus-visible {
+  outline: 3px solid rgb(89 101 216 / 30%);
+  outline-offset: 3px;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1000px) {
+  .team-page {
+    padding: 25px;
+  }
+
+  .team-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .team-project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+  .team-page {
+    padding: 18px 14px;
+  }
+
+  .team-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 17px;
+  }
+
+  .team-header h1 {
+    font-size: 25px;
+  }
+
+  .team-refresh-button {
+    align-self: flex-start;
+  }
+
+  .team-access-notice {
+    gap: 11px;
+    padding: 15px;
+  }
+
+  .team-stats {
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .team-stat-card {
+    padding: 16px;
+  }
+
+  .team-stat-value {
+    font-size: 23px;
+  }
+
+  .team-section-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .team-profile-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .team-profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+  }
+
+  .team-profile-details {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .team-project-card {
+    padding: 17px;
+  }
+
+  .team-project-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .team-task-filters {
+    gap: 8px;
+  }
+
+  .team-task-filters button {
+    padding: 8px 11px;
+  }
+
+  .team-task-item {
+    flex-direction: column;
+    gap: 12px;
+    padding: 17px;
+  }
+
+  .team-task-meta {
+    flex-direction: column;
+    gap: 7px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 360px) {
+  .team-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .team-page {
+    padding: 15px 11px;
+  }
+
+  .team-profile-card {
+    padding: 15px;
+  }
+}
