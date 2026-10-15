@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../Services/api";
 import "./Dashboard.css";
@@ -13,7 +13,18 @@ const initialStats = {
 function getResults(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.data)) return data.data;
   return [];
+}
+
+function getCount(value, fallback) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (Array.isArray(value)) return value.length;
+
+  return fallback;
 }
 
 function getStatusClass(status) {
@@ -40,6 +51,41 @@ function formatDate(date) {
   });
 }
 
+function isOverdue(task) {
+  const deadline = task.due_date || task.deadline;
+
+  if (!deadline || task.status === "completed") return false;
+
+  const parsed = new Date(deadline);
+
+  if (Number.isNaN(parsed.getTime())) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  parsed.setHours(0, 0, 0, 0);
+
+  return parsed < today;
+}
+
+function getRecentItems(items) {
+  return [...items]
+    .sort((a, b) => {
+      const dateA = new Date(
+        a.updated_at || a.created_at || a.start_date || 0
+      ).getTime();
+
+      const dateB = new Date(
+        b.updated_at || b.created_at || b.start_date || 0
+      ).getTime();
+
+      return (
+        (Number.isNaN(dateB) ? 0 : dateB) -
+        (Number.isNaN(dateA) ? 0 : dateA)
+      );
+    })
+    .slice(0, 5);
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -49,92 +95,112 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadDashboard = useCallback(async (signal) => {
+    const token = localStorage.getItem("flowdesk_access_token");
 
-    async function loadDashboard() {
-      const token = localStorage.getItem("flowdesk_access_token");
-
-      if (!token) {
-        navigate("/login", { replace: true });
-        return;
-      }
-
-      const requests = await Promise.allSettled([
-        api.get("/dashboard/"),
-        api.get("/projects/"),
-        api.get("/tasks/"),
-        api.get("/profile/"),
-      ]);
-
-      if (cancelled) return;
-
-      const failures = [];
-
-      const [statsResult, projectsResult, tasksResult, profileResult] =
-        requests;
-
-      if (statsResult.status === "fulfilled") {
-        const data = statsResult.value.data;
-
-        setStats({
-          projects:
-            data.total_projects ??
-            data.projects_count ??
-            data.projects ??
-            0,
-          tasks:
-            data.total_tasks ??
-            data.tasks_count ??
-            data.tasks ??
-            0,
-          completed:
-            data.completed_tasks ??
-            data.completed_tasks_count ??
-            0,
-          overdue:
-            data.overdue_tasks ??
-            data.overdue_tasks_count ??
-            0,
-        });
-      } else {
-        failures.push("Dashboard statistics");
-      }
-
-      if (projectsResult.status === "fulfilled") {
-        setProjects(getResults(projectsResult.value.data));
-      } else {
-        failures.push("Projects");
-      }
-
-      if (tasksResult.status === "fulfilled") {
-        setTasks(getResults(tasksResult.value.data));
-      } else {
-        failures.push("Tasks");
-      }
-
-      if (profileResult.status === "fulfilled") {
-        setUser(profileResult.value.data);
-      } else if (profileResult.reason?.response?.status === 401) {
-        localStorage.removeItem("flowdesk_access_token");
-        localStorage.removeItem("flowdesk_refresh_token");
-        navigate("/login", { replace: true });
-        return;
-      } else {
-        failures.push("Profile");
-      }
-
-      setErrors(failures);
-      setLoading(false);
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
     }
 
-    loadDashboard();
+    setLoading(true);
+    setErrors([]);
 
-    return () => {
-      cancelled = true;
-    };
+    const requests = await Promise.allSettled([
+      api.get("/dashboard/", { signal }),
+      api.get("/projects/", { signal }),
+      api.get("/tasks/", { signal }),
+      api.get("/profile/", { signal }),
+    ]);
+
+    if (signal.aborted) return;
+
+    const [statsResult, projectsResult, tasksResult, profileResult] =
+      requests;
+
+    const failures = [];
+    const projectItems =
+      projectsResult.status === "fulfilled"
+        ? getResults(projectsResult.value.data)
+        : [];
+
+    const taskItems =
+      tasksResult.status === "fulfilled"
+        ? getResults(tasksResult.value.data)
+        : [];
+
+    if (projectsResult.status === "fulfilled") {
+      setProjects(projectItems);
+    } else {
+      failures.push("Projects");
+    }
+
+    if (tasksResult.status === "fulfilled") {
+      setTasks(taskItems);
+    } else {
+      failures.push("Tasks");
+    }
+
+    if (profileResult.status === "fulfilled") {
+      setUser(profileResult.value.data);
+    } else if (profileResult.reason?.response?.status === 401) {
+      localStorage.removeItem("flowdesk_access_token");
+      localStorage.removeItem("flowdesk_refresh_token");
+      navigate("/login", { replace: true });
+      return;
+    } else {
+      failures.push("Profile");
+    }
+
+    const completedFallback = taskItems.filter(
+      (task) => String(task.status || "").toLowerCase() === "completed"
+    ).length;
+
+    const overdueFallback = taskItems.filter(isOverdue).length;
+
+    const dashboardData =
+      statsResult.status === "fulfilled"
+        ? statsResult.value.data
+        : {};
+
+    setStats({
+      projects: getCount(
+        dashboardData.total_projects ??
+          dashboardData.projects_count ??
+          dashboardData.projects,
+        projectItems.length
+      ),
+      tasks: getCount(
+        dashboardData.total_tasks ??
+          dashboardData.tasks_count ??
+          dashboardData.tasks,
+        taskItems.length
+      ),
+      completed: getCount(
+        dashboardData.completed_tasks ??
+          dashboardData.completed_tasks_count,
+        completedFallback
+      ),
+      overdue: getCount(
+        dashboardData.overdue_tasks ??
+          dashboardData.overdue_tasks_count,
+        overdueFallback
+      ),
+    });
+
+    setErrors(failures);
+    setLoading(false);
   }, [navigate]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    loadDashboard(controller.signal);
+
+    return () => controller.abort();
+  }, [loadDashboard, refreshKey]);
 
   function handleLogout() {
     localStorage.removeItem("flowdesk_access_token");
@@ -147,8 +213,8 @@ export default function Dashboard() {
     user?.username ||
     "there";
 
-  const recentProjects = projects.slice(0, 5);
-  const recentTasks = tasks.slice(0, 5);
+  const recentProjects = getRecentItems(projects);
+  const recentTasks = getRecentItems(tasks);
 
   return (
     <div className="dashboard-layout">
@@ -202,6 +268,11 @@ export default function Dashboard() {
             My Profile
           </Link>
 
+          <Link to="/settings" className="dashboard-nav-link">
+            <span className="nav-icon">⚙</span>
+            Settings
+          </Link>
+
           <button
             type="button"
             className="dashboard-nav-link dashboard-logout"
@@ -241,18 +312,36 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <Link to="/projects" className="dashboard-primary-button">
-              <span>+</span> View projects
-            </Link>
+            <div className="dashboard-actions">
+              <button
+                type="button"
+                className="dashboard-primary-button"
+                onClick={() => setRefreshKey((key) => key + 1)}
+                disabled={loading}
+              >
+                {loading ? "Refreshing..." : "↻ Refresh"}
+              </button>
+
+              <Link to="/projects" className="dashboard-primary-button">
+                <span>+</span> View projects
+              </Link>
+            </div>
           </section>
 
           {errors.length > 0 && (
-            <div className="dashboard-alert" role="status">
+            <div className="dashboard-alert" role="alert">
               <strong>Some dashboard data couldn't be loaded.</strong>
               <p>
-                Check the Django endpoint URLs and permissions for:{" "}
-                {errors.join(", ")}.
+                Check your connection or permissions for: {errors.join(", ")}.
+                Your account may not have access to every resource.
               </p>
+              <button
+                type="button"
+                onClick={() => setRefreshKey((key) => key + 1)}
+                disabled={loading}
+              >
+                Try again
+              </button>
             </div>
           )}
 
@@ -316,6 +405,11 @@ export default function Dashboard() {
 
               {loading ? (
                 <p className="dashboard-empty">Loading projects...</p>
+              ) : projectsResultUnavailable(errors) ? (
+                <div className="dashboard-empty">
+                  <strong>Projects couldn't be loaded</strong>
+                  <p>Refresh the dashboard and try again.</p>
+                </div>
               ) : recentProjects.length === 0 ? (
                 <div className="dashboard-empty">
                   <span className="empty-symbol">▣</span>
@@ -359,6 +453,11 @@ export default function Dashboard() {
 
               {loading ? (
                 <p className="dashboard-empty">Loading tasks...</p>
+              ) : tasksResultUnavailable(errors) ? (
+                <div className="dashboard-empty">
+                  <strong>Tasks couldn't be loaded</strong>
+                  <p>Refresh the dashboard and try again.</p>
+                </div>
               ) : recentTasks.length === 0 ? (
                 <div className="dashboard-empty">
                   <span className="empty-symbol">✓</span>
@@ -370,10 +469,14 @@ export default function Dashboard() {
                   {recentTasks.map((task) => (
                     <div className="dashboard-task-row" key={task.id}>
                       <span className="task-check">
-                        {task.status === "completed" ? "✓" : ""}
+                        {String(task.status || "").toLowerCase() === "completed"
+                          ? "✓"
+                          : ""}
                       </span>
                       <div className="task-row-main">
-                        <strong>{task.title || task.name || "Untitled task"}</strong>
+                        <strong>
+                          {task.title || task.name || "Untitled task"}
+                        </strong>
                         <span>
                           Due {formatDate(task.due_date || task.deadline)}
                         </span>
@@ -397,4 +500,12 @@ export default function Dashboard() {
       </main>
     </div>
   );
+}
+
+function projectsResultUnavailable(errors) {
+  return errors.includes("Projects");
+}
+
+function tasksResultUnavailable(errors) {
+  return errors.includes("Tasks");
 }
