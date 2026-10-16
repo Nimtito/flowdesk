@@ -28,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 OPENAI_API_KEY = config("OPENAI_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = config("DEBUG", default=False, cast=bool)
 allowed_hosts_str = config('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = [
     "localhost",
