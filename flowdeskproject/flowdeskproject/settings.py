@@ -33,7 +33,7 @@ allowed_hosts_str = config('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "flowdesk-fzdi.onrender.com",
+    "flowdesk-1-ha4h.onrender.com",
 ]
 
 
