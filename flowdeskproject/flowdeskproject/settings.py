@@ -30,7 +30,11 @@ OPENAI_API_KEY = config("OPENAI_API_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 allowed_hosts_str = config('ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',') if host.strip()]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "flowdesk-fzdi.onrender.com",
+]
 
 
 # Application definition
@@ -187,4 +191,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://flowdesk-frontend-pvbv.onrender.com",
 ]
